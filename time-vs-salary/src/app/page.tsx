@@ -23,7 +23,7 @@ export default function Home() {
     const seconds = Math.floor((decimalHours * 3600) % 60);
 
     let hoursString = "";
-    let minutesString = `${minutes} minut${minutes === 1 ? "" : "ar"}`;
+    let minutesString = `${minutes} minut${minutes === 1 ? "" : "er"}`;
     let secondsString = "";
 
     if (hours !== 0) {
@@ -134,7 +134,6 @@ export default function Home() {
         </div>
         <SliderExtended
           text="Netto månadslön"
-          toolipLabel="Lön efter skatt"
           sliderSettings={salarySliderSetting}
           onTextfieldChange={onSalaryChange}
           textfieldValue={salary}

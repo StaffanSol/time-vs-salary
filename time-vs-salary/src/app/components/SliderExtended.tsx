@@ -4,7 +4,6 @@ import React, { ChangeEvent } from "react";
 
 type SliderExtendedProps = {
   text: string;
-  toolipLabel?: string;
   textfieldValue: number;
   showTextfield: boolean;
   sliderSettings: SliderProps;
