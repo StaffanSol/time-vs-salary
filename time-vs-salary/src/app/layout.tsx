@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Arbetstid vs Lön",
-  description: "Räkna ut hur mycket arbetstid varje köp är värt",
+  title: "Tid vs Pris",
+  description: "Räkna ut hur mycket tid varje köp är värt",
 };
 
 export default function RootLayout({

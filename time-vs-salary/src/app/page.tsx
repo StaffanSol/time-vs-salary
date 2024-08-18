@@ -17,7 +17,7 @@ export default function Home() {
   const [showHoursTextfield, setShowHoursTextfield] = useState(false);
   const [showPriceTextfield, setShowPriceTextfield] = useState(false);
 
-  function convertDecimalTimeToHMS(decimalHours: number): string {
+  function convertDecimalTimeToHMSOutput(decimalHours: number): string {
     const hours = Math.floor(decimalHours);
     const minutes = Math.floor((decimalHours * 60) % 60);
     const seconds = Math.floor((decimalHours * 3600) % 60);
@@ -38,7 +38,7 @@ export default function Home() {
 
   const payPerHour = salary / hours;
   const timeInHours = price / payPerHour;
-  const result = convertDecimalTimeToHMS(timeInHours);
+  const result = convertDecimalTimeToHMSOutput(timeInHours);
 
   function updateSalary(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -123,12 +123,12 @@ export default function Home() {
           <AccessTime fontSize="inherit"></AccessTime>
         </div>
         <h1 className="font-bold text-xl sm:text-2xl xl:text-3xl">
-          Hur mycket arbetstid kan du spara?
+          Hur mycket tid kan du spara?
         </h1>
       </header>
       <div className="flex flex-col gap-2 w-full p-8 max-w-2xl rounded overflow-hidden shadow-lg">
         <div className="flex flex-col gap-3">
-          <p className="font-bold text-2xl text-center">
+          <p className="font-bold sm:text-2xl sm:text-1xl text-center">
             {price && salary && hours ? result : 0}
           </p>
         </div>
