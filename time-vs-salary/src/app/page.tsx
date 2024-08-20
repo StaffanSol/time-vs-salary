@@ -9,9 +9,13 @@ const MAX_HOURS = 200;
 const MAX_PRICE = 1000;
 
 export default function Home() {
-  const [salary, setSalary] = useState(25000);
-  const [hours, setHours] = useState(160);
-  const [price, setPrice] = useState(500);
+  const [salaryString, setSalaryString] = useState<string | null>("25000");
+  const [hoursString, setHoursString] = useState<string | null>("160");
+  const [priceString, setPriceString] = useState<string | null>("500");
+
+  const salary = salaryString && parseFloat(salaryString);
+  const hours = hoursString && parseFloat(hoursString);
+  const price = priceString && parseFloat(priceString);
 
   const [showSalaryTextfield, setShowSalaryTextfield] = useState(false);
   const [showHoursTextfield, setShowHoursTextfield] = useState(false);
@@ -36,82 +40,81 @@ export default function Home() {
     return `${hoursString}${minutesString}${secondsString}`;
   }
 
-  const payPerHour = salary / hours;
-  const timeInHours = price / payPerHour;
-  const result = convertDecimalTimeToHMSOutput(timeInHours);
+  const payPerHour = salary && hours && salary / hours;
+  const timeInHours = price && payPerHour && price / payPerHour;
+  const result = timeInHours && convertDecimalTimeToHMSOutput(timeInHours);
 
   function updateSalary(event: Event) {
     const target = event.target as HTMLInputElement;
-    setSalary(+target.value);
+    setSalaryString(target.value);
   }
 
   function updateHours(event: Event) {
     const target = event.target as HTMLInputElement;
-    setHours(+target.value);
+    setHoursString(target.value);
   }
 
   function updatePrice(event: Event) {
     const target = event.target as HTMLInputElement;
-    setPrice(+target.value);
+    setPriceString(target.value);
   }
 
   const salarySliderSetting: SliderProps = {
     "aria-label": "Always visible",
     onChange: updateSalary,
-    value: salary,
+    value: salary === "" || salary === null ? 0 : salary,
     step: 100,
-    valueLabelDisplay:
-      salary > MAX_SALARY || showSalaryTextfield ? "off" : "on",
+    valueLabelDisplay: showSalaryTextfield ? "off" : "on",
     max: MAX_SALARY,
   };
 
   const hoursSliderSetting: SliderProps = {
     "aria-label": "Always visible",
     onChange: updateHours,
-    value: hours,
+    value: hours === "" || hours === null ? 0 : hours,
     step: 1,
-    valueLabelDisplay: hours > MAX_HOURS || showHoursTextfield ? "off" : "on",
+    valueLabelDisplay: showHoursTextfield ? "off" : "on",
     max: MAX_HOURS,
   };
 
   const priceSliderSetting: SliderProps = {
     "aria-label": "Always visible",
     onChange: updatePrice,
-    value: price,
+    value: price === "" || price === null ? 0 : price,
     step: 1,
-    valueLabelDisplay: price > MAX_PRICE || showPriceTextfield ? "off" : "on",
+    valueLabelDisplay: showPriceTextfield ? "off" : "on",
     max: MAX_PRICE,
   };
 
   function onSalaryChange(event: ChangeEvent<HTMLInputElement>) {
-    setSalary(+event.target.value);
+    setSalaryString(event.target.value);
   }
 
   function onPriceChange(event: ChangeEvent<HTMLInputElement>) {
-    setPrice(+event.target.value);
+    setPriceString(event.target.value);
   }
 
   function onHoursChange(event: ChangeEvent<HTMLInputElement>) {
-    setHours(+event.target.value);
+    setHoursString(event.target.value);
   }
 
   function onSalaryTextfieldUpdate() {
-    if (showSalaryTextfield && salary > MAX_SALARY) {
-      setSalary(MAX_SALARY);
+    if (salary && showSalaryTextfield && salary > MAX_SALARY) {
+      setSalaryString(MAX_SALARY.toString());
     }
     setShowSalaryTextfield(!showSalaryTextfield);
   }
 
   function onPriceTextfieldUpdate() {
-    if (showPriceTextfield && price > MAX_PRICE) {
-      setPrice(MAX_PRICE);
+    if (price && showPriceTextfield && price > MAX_PRICE) {
+      setPriceString(MAX_PRICE.toString());
     }
     setShowPriceTextfield(!showPriceTextfield);
   }
 
   function onHoursTextfieldUpdate() {
-    if (showHoursTextfield && hours > MAX_HOURS) {
-      setHours(MAX_HOURS);
+    if (showHoursTextfield && hours && hours > MAX_HOURS) {
+      setHoursString(MAX_HOURS.toString());
     }
     setShowHoursTextfield(!showHoursTextfield);
   }
@@ -129,14 +132,14 @@ export default function Home() {
       <div className="flex flex-col gap-2 w-full p-8 max-w-2xl rounded overflow-hidden shadow-lg">
         <div className="flex flex-col gap-3">
           <p className="font-bold sm:text-2xl sm:text-1xl text-center">
-            {price && salary && hours ? result : 0}
+            {priceString && salaryString && hoursString ? result : 0}
           </p>
         </div>
         <SliderExtended
           text="Netto månadslön"
           sliderSettings={salarySliderSetting}
           onTextfieldChange={onSalaryChange}
-          textfieldValue={salary}
+          textfieldValue={salaryString ?? ""}
           showTextfield={showSalaryTextfield}
           onToggleTextfiled={onSalaryTextfieldUpdate}
         />
@@ -144,7 +147,7 @@ export default function Home() {
           text="Timmar per månad"
           sliderSettings={hoursSliderSetting}
           onTextfieldChange={onHoursChange}
-          textfieldValue={hours}
+          textfieldValue={hoursString ?? ""}
           showTextfield={showHoursTextfield}
           onToggleTextfiled={onHoursTextfieldUpdate}
         />
@@ -152,7 +155,7 @@ export default function Home() {
           text="Pris på produkt"
           sliderSettings={priceSliderSetting}
           onTextfieldChange={onPriceChange}
-          textfieldValue={price}
+          textfieldValue={priceString ?? ""}
           showTextfield={showPriceTextfield}
           onToggleTextfiled={onPriceTextfieldUpdate}
         />

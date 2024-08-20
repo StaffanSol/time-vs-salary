@@ -4,7 +4,7 @@ import React, { ChangeEvent } from "react";
 
 type SliderExtendedProps = {
   text: string;
-  textfieldValue: number;
+  textfieldValue: string;
   showTextfield: boolean;
   sliderSettings: SliderProps;
   onTextfieldChange: (event: ChangeEvent<HTMLInputElement>) => void;
