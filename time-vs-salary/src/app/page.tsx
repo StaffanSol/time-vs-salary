@@ -3,6 +3,7 @@ import { SliderProps } from "@mui/material";
 import { ChangeEvent, useState } from "react";
 import { AccessTime } from "@mui/icons-material";
 import SliderExtended from "./components/SliderExtended";
+import Image from "next/image";
 
 const MAX_SALARY = 50000;
 const MAX_HOURS = 200;
@@ -159,6 +160,24 @@ export default function Home() {
           showTextfield={showPriceTextfield}
           onToggleTextfiled={onPriceTextfieldUpdate}
         />
+      </div>
+      <div className="mt-10">
+        <a
+          href="https://discord.gg/PeRDkb76aV"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            className="w-[182px] m-auto hover:bg-[#e3e5ff] p-2 rounded-md bg-gray-100"
+            src="/discord-logo-blue.svg"
+            width={500}
+            height={500}
+            alt="Picture of the author"
+          />
+          <p className="text-xs text-gray-500 text-center mt-[2px]">
+            Gå med i en av Sverige största programmerings communities
+          </p>
+        </a>
       </div>
     </main>
   );
