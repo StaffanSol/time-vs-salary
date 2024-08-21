@@ -175,7 +175,7 @@ export default function Home() {
             alt="Picture of the author"
           />
           <p className="text-xs text-gray-500 text-center mt-[2px]">
-            Gå med i en av Sverige största programmerings communities
+            Gå med i en av Sveriges största programmerings communities
           </p>
         </a>
       </div>
