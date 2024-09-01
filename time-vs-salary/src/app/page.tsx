@@ -7,16 +7,19 @@ import Image from "next/image";
 
 const MAX_SALARY = 50000;
 const MAX_HOURS = 200;
-const MAX_PRICE = 1000;
+const MAX_PRICE = 15000;
+const MAX_START = 1000000;
 const MAX_SAVE_TIME = 30;
-const MAX_START = 0;
+
+const YEARLY_INTEREST = 0.07;
+const NUMBER_OF_MONTHS = 12;
 
 export default function Home() {
   const [salaryString, setSalaryString] = useState<string | null>("25000");
   const [hoursString, setHoursString] = useState<string | null>("160");
   const [priceString, setPriceString] = useState<string | null>("500");
-  const [saveTimeString, setSaveTimeString] = useState<string | null>("10");
-  const [startString, setStartString] = useState<string | null>("10");
+  const [saveTimeString, setSaveTimeString] = useState<string | null>("15");
+  const [startString, setStartString] = useState<string | null>("10000");
 
   const [showSalaryTextfield, setShowSalaryTextfield] = useState(false);
   const [showHoursTextfield, setShowHoursTextfield] = useState(false);
@@ -49,9 +52,32 @@ export default function Home() {
     return `${hoursString}${minutesString}${secondsString}`;
   }
 
+  function calculateCompoundInterest(
+    start: number,
+    saveTime: number,
+    price: number
+  ) {
+    let monthlyInterest = 1.07 ** (1 / 12); // Månatlig ränta baserad på årlig ränta 7% (1.07)
+    let months = saveTime * 12; // Antal månader
+
+    for (let i = 0; i < months; i++) {
+      start += price; // Lägg till månadssparande
+      start *= monthlyInterest; // Räkna ut räntan varje månad
+    }
+
+    return start;
+  }
+
+  const compoundInterest =
+    start &&
+    saveTime &&
+    price &&
+    calculateCompoundInterest(start, saveTime, price);
+
   const payPerHour = salary && hours && salary / hours;
   const timeInHours = price && payPerHour && price / payPerHour;
-  const result = timeInHours && convertDecimalTimeToHMSOutput(timeInHours);
+
+  const result = compoundInterest; //timeInHours && convertDecimalTimeToHMSOutput(timeInHours);
 
   function updateSalary(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -100,7 +126,7 @@ export default function Home() {
     "aria-label": "Always visible",
     onChange: updatePrice,
     value: price === "" || price === null ? 0 : price,
-    step: 1,
+    step: 10,
     valueLabelDisplay: showPriceTextfield ? "off" : "on",
     max: MAX_PRICE,
   };
@@ -109,9 +135,9 @@ export default function Home() {
     "aria-label": "Always visible",
     onChange: updateStart,
     value: start === "" || start === null ? 0 : start,
-    step: 1,
+    step: 1000,
     valueLabelDisplay: showStartTextfield ? "off" : "on",
-    max: MAX_SAVE_TIME,
+    max: MAX_START,
   };
 
   const saveTimeSliderSetting: SliderProps = {
@@ -249,7 +275,7 @@ export default function Home() {
             alt="Picture of the author"
           />
           <p className="text-xs text-gray-500 text-center mt-[2px]">
-            Gå med i en av Sveriges största programmerings communities
+            Gå med i en av Sveriges största programmering communities
           </p>
         </a>
       </div>

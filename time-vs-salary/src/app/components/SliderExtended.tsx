@@ -12,6 +12,10 @@ type SliderExtendedProps = {
 };
 
 function SliderExtended(props: SliderExtendedProps) {
+  function numFormatter(value: number) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  }
+
   return (
     <div>
       <div className="flex gap-1 ">
@@ -38,7 +42,10 @@ function SliderExtended(props: SliderExtendedProps) {
           )}
         </span>
       </div>
-      <Slider {...props.sliderSettings} />
+      <Slider
+        {...props.sliderSettings}
+        valueLabelFormat={(value) => <div>{numFormatter(value)}</div>}
+      />
     </div>
   );
 }
