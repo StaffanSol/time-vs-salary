@@ -8,19 +8,27 @@ import Image from "next/image";
 const MAX_SALARY = 50000;
 const MAX_HOURS = 200;
 const MAX_PRICE = 1000;
+const MAX_SAVE_TIME = 30;
+const MAX_START = 0;
 
 export default function Home() {
   const [salaryString, setSalaryString] = useState<string | null>("25000");
   const [hoursString, setHoursString] = useState<string | null>("160");
   const [priceString, setPriceString] = useState<string | null>("500");
-
-  const salary = salaryString && parseFloat(salaryString);
-  const hours = hoursString && parseFloat(hoursString);
-  const price = priceString && parseFloat(priceString);
+  const [saveTimeString, setSaveTimeString] = useState<string | null>("10");
+  const [startString, setStartString] = useState<string | null>("10");
 
   const [showSalaryTextfield, setShowSalaryTextfield] = useState(false);
   const [showHoursTextfield, setShowHoursTextfield] = useState(false);
   const [showPriceTextfield, setShowPriceTextfield] = useState(false);
+  const [showSaveTimeTextfield, setShowSaveTimeTextfield] = useState(false);
+  const [showStartTextfield, setShowStartTextfield] = useState(false);
+
+  const salary = salaryString && parseFloat(salaryString);
+  const hours = hoursString && parseFloat(hoursString);
+  const price = priceString && parseFloat(priceString);
+  const saveTime = saveTimeString && parseFloat(saveTimeString);
+  const start = startString && parseFloat(startString);
 
   function convertDecimalTimeToHMSOutput(decimalHours: number): string {
     const hours = Math.floor(decimalHours);
@@ -60,6 +68,16 @@ export default function Home() {
     setPriceString(target.value);
   }
 
+  function updateStart(event: Event) {
+    const target = event.target as HTMLInputElement;
+    setStartString(target.value);
+  }
+
+  function updateSaveTime(event: Event) {
+    const target = event.target as HTMLInputElement;
+    setSaveTimeString(target.value);
+  }
+
   const salarySliderSetting: SliderProps = {
     "aria-label": "Always visible",
     onChange: updateSalary,
@@ -87,12 +105,38 @@ export default function Home() {
     max: MAX_PRICE,
   };
 
+  const startSliderSetting: SliderProps = {
+    "aria-label": "Always visible",
+    onChange: updateStart,
+    value: start === "" || start === null ? 0 : start,
+    step: 1,
+    valueLabelDisplay: showStartTextfield ? "off" : "on",
+    max: MAX_SAVE_TIME,
+  };
+
+  const saveTimeSliderSetting: SliderProps = {
+    "aria-label": "Always visible",
+    onChange: updateSaveTime,
+    value: saveTime === "" || saveTime === null ? 0 : saveTime,
+    step: 1,
+    valueLabelDisplay: showSaveTimeTextfield ? "off" : "on",
+    max: MAX_SAVE_TIME,
+  };
+
   function onSalaryChange(event: ChangeEvent<HTMLInputElement>) {
     setSalaryString(event.target.value);
   }
 
   function onPriceChange(event: ChangeEvent<HTMLInputElement>) {
     setPriceString(event.target.value);
+  }
+
+  function onSaveTimeChange(event: ChangeEvent<HTMLInputElement>) {
+    setSaveTimeString(event.target.value);
+  }
+
+  function onStartChange(event: ChangeEvent<HTMLInputElement>) {
+    setStartString(event.target.value);
   }
 
   function onHoursChange(event: ChangeEvent<HTMLInputElement>) {
@@ -111,6 +155,20 @@ export default function Home() {
       setPriceString(MAX_PRICE.toString());
     }
     setShowPriceTextfield(!showPriceTextfield);
+  }
+
+  function onStartTextfieldUpdate() {
+    if (start && showStartTextfield && start > MAX_START) {
+      setStartString(MAX_START.toString());
+    }
+    setShowStartTextfield(!showStartTextfield);
+  }
+
+  function onSaveTimeTextfieldUpdate() {
+    if (saveTime && showSaveTimeTextfield && saveTime > MAX_SAVE_TIME) {
+      setSaveTimeString(MAX_SAVE_TIME.toString());
+    }
+    setShowSaveTimeTextfield(!showSaveTimeTextfield);
   }
 
   function onHoursTextfieldUpdate() {
@@ -145,7 +203,7 @@ export default function Home() {
           onToggleTextfiled={onSalaryTextfieldUpdate}
         />
         <SliderExtended
-          text="Timmar per månad"
+          text="Arbetstimmar per månad"
           sliderSettings={hoursSliderSetting}
           onTextfieldChange={onHoursChange}
           textfieldValue={hoursString ?? ""}
@@ -153,12 +211,28 @@ export default function Home() {
           onToggleTextfiled={onHoursTextfieldUpdate}
         />
         <SliderExtended
-          text="Pris på produkt"
+          text="Månadssparande"
           sliderSettings={priceSliderSetting}
           onTextfieldChange={onPriceChange}
           textfieldValue={priceString ?? ""}
           showTextfield={showPriceTextfield}
           onToggleTextfiled={onPriceTextfieldUpdate}
+        />
+        <SliderExtended
+          text="Startbelopp"
+          sliderSettings={startSliderSetting}
+          onTextfieldChange={onStartChange}
+          textfieldValue={startString ?? ""}
+          showTextfield={showStartTextfield}
+          onToggleTextfiled={onStartTextfieldUpdate}
+        />
+        <SliderExtended
+          text="Spartid"
+          sliderSettings={saveTimeSliderSetting}
+          onTextfieldChange={onSaveTimeChange}
+          textfieldValue={saveTimeString ?? ""}
+          showTextfield={showSaveTimeTextfield}
+          onToggleTextfiled={onSaveTimeTextfieldUpdate}
         />
       </div>
       <div className="mt-10">
