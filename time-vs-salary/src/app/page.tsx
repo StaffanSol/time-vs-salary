@@ -28,28 +28,72 @@ export default function Home() {
   const [showStartTextfield, setShowStartTextfield] = useState(false);
 
   const salary = salaryString && parseFloat(salaryString);
-  const hours = hoursString && parseFloat(hoursString);
+  let hours = hoursString && parseFloat(hoursString);
   const price = priceString && parseFloat(priceString);
   const saveTime = saveTimeString && parseFloat(saveTimeString);
   const start = startString && parseFloat(startString);
 
-  function convertDecimalTimeToHMSOutput(decimalHours: number): string {
+  // function convertDecimalTimeToHMSOutput(decimalHours: number): string {
+  //   const hours = Math.floor(decimalHours);
+  //   const minutes = Math.floor((decimalHours * 60) % 60);
+  //   const seconds = Math.floor((decimalHours * 3600) % 60);
+
+  //   let hoursString = "";
+  //   let minutesString = `${minutes} minut${minutes === 1 ? "" : "er"}`;
+  //   let secondsString = "";
+
+  //   if (hours !== 0) {
+  //     hoursString += `${hours} timm${hours === 1 ? "e" : "ar"}, `;
+  //   }
+  //   if (hours === 0) {
+  //     secondsString += `, ${seconds} sekund${seconds === 1 ? "" : "er"} `;
+  //   }
+
+  //   return `${hoursString}${minutesString}${secondsString}`;
+  // }
+
+  function convertDecimalHours(decimalHours: number): string {
+    const hoursPerDay = 8;
+    const daysPerMonth = 20;
+    const monthsPerYear = 12;
+    const hoursPerMonth = hoursPerDay * daysPerMonth;
+    const hoursPerYear = hoursPerMonth * monthsPerYear;
+
+    const years = Math.floor(decimalHours / hoursPerYear);
+    decimalHours %= hoursPerYear;
+
+    const months = Math.floor(decimalHours / hoursPerMonth);
+    decimalHours %= hoursPerMonth;
+
+    const days = Math.floor(decimalHours / hoursPerDay);
+    decimalHours %= hoursPerDay;
+
     const hours = Math.floor(decimalHours);
-    const minutes = Math.floor((decimalHours * 60) % 60);
-    const seconds = Math.floor((decimalHours * 3600) % 60);
+    decimalHours %= 1;
 
-    let hoursString = "";
-    let minutesString = `${minutes} minut${minutes === 1 ? "" : "er"}`;
-    let secondsString = "";
+    const minutes = Math.floor(decimalHours * 60);
+    decimalHours = (decimalHours * 60) % 1;
 
-    if (hours !== 0) {
-      hoursString += `${hours} timm${hours === 1 ? "e" : "ar"}, `;
+    const seconds = Math.floor(decimalHours * 60);
+
+    function formatUnit(
+      value: number,
+      singular: string,
+      plural: string
+    ): string {
+      return value > 0 ? `${value} ${value === 1 ? singular : plural}` : "";
     }
-    if (hours === 0) {
-      secondsString += `, ${seconds} sekund${seconds === 1 ? "" : "er"} `;
-    }
 
-    return `${hoursString}${minutesString}${secondsString}`;
+    let result = [];
+    result.push(formatUnit(years, "år", "år"));
+    result.push(formatUnit(months, "månad", "månader"));
+    result.push(formatUnit(days, "dag", "dagar"));
+    result.push(formatUnit(hours, "timme", "timmar"));
+    result.push(formatUnit(minutes, "minut", "minuter"));
+    result.push(formatUnit(seconds, "sekund", "sekunder"));
+
+    // Filter out empty strings and return the first three non-empty values
+    return result.filter(Boolean).slice(0, 3).join(", ");
   }
 
   function calculateCompoundInterest(
@@ -69,15 +113,24 @@ export default function Home() {
   }
 
   const compoundInterest =
-    start &&
+    start !== null &&
+    start !== "" &&
     saveTime &&
-    price &&
+    price !== null &&
+    price !== "" &&
     calculateCompoundInterest(start, saveTime, price);
 
-  const payPerHour = salary && hours && salary / hours;
-  const timeInHours = price && payPerHour && price / payPerHour;
+  hours = hours ? hours : 1;
 
-  const result = compoundInterest; //timeInHours && convertDecimalTimeToHMSOutput(timeInHours);
+  console.log(price);
+
+  const payPerHour =
+    salary !== null && salary !== "" && hours && saveTime && salary / hours;
+
+  const timeInHours =
+    payPerHour && compoundInterest && compoundInterest / payPerHour;
+
+  const result = timeInHours && convertDecimalHours(timeInHours);
 
   function updateSalary(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -116,7 +169,7 @@ export default function Home() {
   const hoursSliderSetting: SliderProps = {
     "aria-label": "Always visible",
     onChange: updateHours,
-    value: hours === "" || hours === null ? 0 : hours,
+    value: hours === null ? 0 : hours,
     step: 1,
     valueLabelDisplay: showHoursTextfield ? "off" : "on",
     max: MAX_HOURS,
@@ -204,6 +257,9 @@ export default function Home() {
     setShowHoursTextfield(!showHoursTextfield);
   }
 
+  function numFormatter(value: number) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  }
   return (
     <main className="flex min-h-screen flex-col items-center pt-[5vh] gap-4">
       <header className="flex items-center gap-2">
@@ -217,7 +273,7 @@ export default function Home() {
       <div className="flex flex-col gap-2 w-full p-8 max-w-2xl rounded overflow-hidden shadow-lg">
         <div className="flex flex-col gap-3">
           <p className="font-bold sm:text-2xl sm:text-1xl text-center">
-            {priceString && salaryString && hoursString ? result : 0}
+            {result}
           </p>
         </div>
         <SliderExtended
